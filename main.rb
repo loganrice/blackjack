@@ -4,24 +4,22 @@ require 'sinatra'
 set :sessions, true
 
 get "/" do
-  erb :index
+  if session[:name]
+
+    SUITS = ["Hearts", "Diamonds", "Clubs", "Spades"]
+    RANKS = [2, 3, 4, 5, 6, 7, 8, 9, 10, "ace", "jack", "queen", "king"]
+    session[:deck] = SUITS.product(RANKS)
+    erb :game
+  else
+    redirect "login"
+  end
 end
 
-post "/" do
-  puts "username"
-  puts params[:username]
-  puts "password"
-  puts params[:password]
+get "/login" do 
+  erb :login
 end
 
-get "/form" do
-  erb :form
-end
-
-post '/myaction' do
-  puts params['username']
-end
-
-get "/start" do 
-  erb :"login/login"
+post "/" do 
+  session[:name] = params[:name]
+  redirect "/"
 end
