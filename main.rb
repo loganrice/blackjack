@@ -38,6 +38,14 @@ helpers do
     rank = card[1]
     "/images/cards/#{suit}_#{rank}.jpg"
   end
+
+  def bust(score)
+    score > 21
+  end
+
+  def black_jack(score)
+    score == 21
+  end
 end
 
 before do
@@ -76,8 +84,14 @@ end
 
 post "/game/player/hit" do
   session[:player_cards] << session[:deck].pop
-  if calculate_total(session[:player_cards]) > 21
-    @error = "Sorry it looks like you have busted."
+  score = calculate_total(session[:player_cards])
+  if bust(score)
+    @error = "Sorry #{session[:name]} busted."
+    @show_buttons = false
+  end
+
+  if black_jack(score)
+    @win = "#{session[:name]} wins!!"
     @show_buttons = false
   end
   erb :game
@@ -85,4 +99,27 @@ end
 
 post "/game/player/stay" do
   @show_buttons = false
+  @dealers_turn = true
+
+  erb :game
+end
+
+post '/game/dealer/hit' do
+  player_score = calculate_total(session[:dealer_cards])
+  dealer_score = calculate_total(session[:dealer_cards])
+  while dealer_score <= 17
+    session[:dealer_cards] << session[:deck].pop
+    dealer_score = calculate_total(session[:dealer_cards])
+  end
+  
+  if bust(dealer_score)
+    @win = "#{session[:name]} wins!!"
+  elsif player_score > dealer_score
+    @win = "#{session[:name]} wins!!"
+  else
+    @win = "Dealer wins!!"
+  end
+  @show_buttons = false
+  @dealers_turn = false
+  erb :game
 end

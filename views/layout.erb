@@ -22,6 +22,10 @@
       <div class="alert alert-error"><%=@error%></div>
       <a href="/game" class="btn">Play again?</a>
     <% end %>
+    <%if @win %>
+      <div class="alert alert-success"><%=@win%></div>
+      <a href="/game" class="btn">Play again?</a>
+    <% end %>
       <%= yield %>
   </div>
   </body>

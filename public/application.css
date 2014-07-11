@@ -1,0 +1,12 @@
+form.buttons {
+  float: left;
+  margin-left: 5px;
+}
+
+img.cards {
+  margin-left: 5px;
+}
+
+.hidden {
+  visibility: hidden;
+}
