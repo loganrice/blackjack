@@ -20,6 +20,7 @@
   <div class="container">
     <%if @error %>
       <div class="alert alert-error"><%=@error%></div>
+      <a href="/game" class="btn">Play again?</a>
     <% end %>
       <%= yield %>
   </div>
