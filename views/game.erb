@@ -11,9 +11,15 @@
   <div class="well" id="dealer">
     <h4>Dealer's Cards:</h4>
     
-    <% session[:dealer_cards].each do |card| %>
-      <img src="<%= card_path(card) %>" alt="">
+    <% session[:dealer_cards].each_with_index do |card, index| %>
+      <% if index == 0 and @show_dealers_cards == false %>
+        <img src="/images/cards/cover.jpg" alt="">
+      <% else %>
+        <img src="<%= card_path(card) %>" alt="">
+      <% end %>
     <% end %>
+   
+
   </div>
 
   <div class="well" id="player">

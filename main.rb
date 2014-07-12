@@ -70,8 +70,10 @@ post "/" do
 end
 
 get "/game" do 
+  @show_dealers_cards = false
   suits = ["hearts", "diamonds", "clubs", "spades"]
   ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, "ace", "jack", "queen", "king"]
+  @dealers_turn = false
   session[:deck] = suits.product(ranks).shuffle!
   session[:player_cards] = []
   session[:dealer_cards] = []
@@ -83,6 +85,7 @@ get "/game" do
 end
 
 post "/game/player/hit" do
+  @show_dealers_cards = false
   session[:player_cards] << session[:deck].pop
   score = calculate_total(session[:player_cards])
   if bust(score)
@@ -100,11 +103,12 @@ end
 post "/game/player/stay" do
   @show_buttons = false
   @dealers_turn = true
-
+  @show_dealers_cards = false
   erb :game
 end
 
 post '/game/dealer/hit' do
+  @display_card = @dealers_turn if @dealers_turn == true
   player_score = calculate_total(session[:dealer_cards])
   dealer_score = calculate_total(session[:dealer_cards])
   while dealer_score <= 17
@@ -120,6 +124,6 @@ post '/game/dealer/hit' do
     @win = "Dealer wins!!"
   end
   @show_buttons = false
-  @dealers_turn = false
+  @show_dealers_cards = true
   erb :game
 end
