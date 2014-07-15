@@ -62,6 +62,7 @@ helpers do
     session[:money] = session[:money] - session[:bet_amount] 
     @show_buttons = false
     @show_play_again = true
+    @error = "Sorry dealer wins"
   end
 end
 
@@ -164,7 +165,6 @@ post '/game/dealer/hit' do
   elsif player_score > dealer_score
     player_wins
   else
-    @win = "Dealer wins!!"
     player_lose
   end
   @show_buttons = false
