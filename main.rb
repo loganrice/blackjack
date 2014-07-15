@@ -55,17 +55,20 @@ helpers do
   def player_wins
     @win = "#{session[:name]} wins!!"
     session[:money] = session[:money] + session[:bet_amount] 
+    @show_play_again = true
   end
 
   def player_lose
     session[:money] = session[:money] - session[:bet_amount] 
     @show_buttons = false
+    @show_play_again = true
   end
 end
 
 before do
   @show_buttons = true
   @show_dealers_cards = false
+  @show_play_again = false
 end
 
 get "/bet" do

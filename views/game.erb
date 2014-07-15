@@ -1,7 +1,9 @@
 
 <div id="game">
   <h1 id="title">BlackJack</h1>
-
+  <% if @show_play_again %>
+    <p><a href="/bet" class="btn">Play again?</a></p>
+  <% end %>
   <div>
     <% if @dealers_turn %>
       <form id="dealer_form" class="buttons" action="/game/dealer/hit" method="post">
