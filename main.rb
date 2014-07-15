@@ -46,11 +46,47 @@ helpers do
   def black_jack(score)
     score == 21
   end
+
+  def bet(amount)
+    @bet = amount.to_i
+    session[:money] -= @bet
+  end
+
+  def player_wins
+    @win = "#{session[:name]} wins!!"
+    session[:money] = session[:money] + session[:bet_amount] 
+  end
+
+  def player_lose
+    session[:money] = session[:money] - session[:bet_amount] 
+    @show_buttons = false
+  end
 end
 
 before do
   @show_buttons = true
+  @show_dealers_cards = false
 end
+
+get "/bet" do
+  session[:bet_amount] = nil
+  erb :bet
+end
+
+post "/bet" do
+  current_bet = params[:bet_amount].to_i
+  if current_bet == 0 || current_bet < 0
+    @error = "Please enter a valid bet amount"
+    halt erb :bet
+  elsif current_bet > session[:money]
+    @error = "Sorry you do not have enough to bet that amount"
+    halt erb :bet
+  else
+    session[:bet_amount] = current_bet
+    redirect '/game'
+  end
+end
+
 
 get "/" do
   if session[:name]
@@ -61,16 +97,21 @@ get "/" do
 end
 
 get "/login" do 
+  session[:money] = 1000
   erb :login
 end
 
-post "/" do 
-  session[:name] = params[:name]
-  redirect "/game"
+post "/" do
+  unless params[:name] == ""
+    session[:name] = params[:name]
+    redirect "/bet"
+  else
+    @error = "Please enter a valid name."
+    erb :login
+  end
 end
 
 get "/game" do 
-  @show_dealers_cards = false
   suits = ["hearts", "diamonds", "clubs", "spades"]
   ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, "ace", "jack", "queen", "king"]
   @dealers_turn = false
@@ -85,31 +126,30 @@ get "/game" do
 end
 
 post "/game/player/hit" do
-  @show_dealers_cards = false
+  
   session[:player_cards] << session[:deck].pop
   score = calculate_total(session[:player_cards])
   if bust(score)
     @error = "Sorry #{session[:name]} busted."
-    @show_buttons = false
+    player_lose
   end
 
   if black_jack(score)
-    @win = "#{session[:name]} wins!!"
-    @show_buttons = false
+    player_wins
   end
-  erb :game
+  erb :game, layout: false
 end
 
 post "/game/player/stay" do
   @show_buttons = false
   @dealers_turn = true
   @show_dealers_cards = false
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/dealer/hit' do
   @display_card = @dealers_turn if @dealers_turn == true
-  player_score = calculate_total(session[:dealer_cards])
+  player_score = calculate_total(session[:player_cards])
   dealer_score = calculate_total(session[:dealer_cards])
   while dealer_score <= 17
     session[:dealer_cards] << session[:deck].pop
@@ -117,11 +157,12 @@ post '/game/dealer/hit' do
   end
   
   if bust(dealer_score)
-    @win = "#{session[:name]} wins!!"
+    player_wins
   elsif player_score > dealer_score
-    @win = "#{session[:name]} wins!!"
+    player_wins
   else
     @win = "Dealer wins!!"
+    player_lose
   end
   @show_buttons = false
   @show_dealers_cards = true

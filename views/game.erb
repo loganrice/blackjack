@@ -1,10 +1,11 @@
 
 <div id="game">
   <h1 id="title">BlackJack</h1>
+
   <div>
     <% if @dealers_turn %>
-      <form action="/game/dealer/hit" method="post">
-      <input type="submit" class="btn btn-primary" value="Show Dealers Cards"/>
+      <form id="dealer_form" class="buttons" action="/game/dealer/hit" method="post">
+        <input type="submit" class="btn btn-primary" value="Show Dealers Cards"/>
       </form>
     <% end %>
   </div>
@@ -28,17 +29,20 @@
     <% session[:player_cards].each do |card| %>
       <img class="cards" src="<%= card_path(card) %>" alt="">
     <% end %>
-    
-    <h5>The total is <%= calculate_total(session[:player_cards]) %></h5>
+
   </div>
-  
+  <h4>
+    <%= session[:name] %> has $<%= session[:money] %> 
+    and has bet $<%= session[:bet_amount] %>
+    Cards total to <%= calculate_total(session[:player_cards]) %>
+  </h4>
   
   <% if @show_buttons %>
     <p>Would you like to hit or stay?</p>
-    <form class="buttons" action="/game/player/hit" method="post">
+    <form id="hit_form" class="buttons" action="/game/player/hit" method="post">
       <input type="submit" class="btn btn-success" value="Hit"/>
     </form>
-    <form class="buttons" action="/game/player/stay" method="post">
+    <form id="stay_form" class="buttons" action="/game/player/stay" method="post">
       <input type="submit" class="btn btn-danger" value="Stay"/>
     </form>
   
