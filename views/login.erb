@@ -1,5 +1,9 @@
 <h3>Please login</h3>
 
+<%if @error %>
+  <div class="alert alert-error"><%=@error%></div> 
+<% end %>
+
 <form action="/" method="post">
   <label>What is your name?</label>
   <input type="text" name="name"/>

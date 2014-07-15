@@ -2,8 +2,16 @@
 <div id="game">
   <h1 id="title">BlackJack</h1>
   <% if @show_play_again %>
+    
+      <%if @error %>
+        <div class="alert alert-error"><%=@error%></div> 
+      <% end %>
+      <%if @win %>
+        <div class="alert alert-success"><%=@win%></div>
+      <% end %>
     <p><a href="/bet" class="btn">Play again?</a></p>
   <% end %>
+  
   <div>
     <% if @dealers_turn %>
       <form id="dealer_form" class="buttons" action="/game/dealer/hit" method="post">

@@ -2,6 +2,11 @@
   <%=session[:player_name] %> has
   $<%=session[:money].to_i %>
 </h4>
+
+<%if @error %>
+  <div class="alert alert-error"><%=@error%></div> 
+<% end %>
+
 <form action="/bet" method="post">
   <label>How much would you like to bet?</label>
   <input type="text" name="bet_amount" />

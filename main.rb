@@ -56,6 +56,7 @@ helpers do
     @win = "#{session[:name]} wins!!"
     session[:money] = session[:money] + session[:bet_amount] 
     @show_play_again = true
+    @show_buttons = false
   end
 
   def player_lose
@@ -63,6 +64,7 @@ helpers do
     @show_buttons = false
     @show_play_again = true
     @error = "Sorry dealer wins"
+    @show_buttons = false
   end
 end
 
@@ -126,6 +128,10 @@ get "/game" do
   session[:dealer_cards] << session[:deck].pop
   session[:player_cards] << session[:deck].pop
   session[:dealer_cards] << session[:deck].pop
+  score = calculate_total(session[:player_cards])
+  if black_jack(score)
+    player_wins
+  end
   erb :game
 end
 
@@ -167,7 +173,7 @@ post '/game/dealer/hit' do
   else
     player_lose
   end
-  @show_buttons = false
+  
   @show_dealers_cards = true
   erb :game
 end
